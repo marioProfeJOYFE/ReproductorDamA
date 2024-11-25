@@ -1,6 +1,7 @@
 package com.mrh.reproductor
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -55,6 +56,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
 import com.mrh.reproductor.ui.theme.ReproductorTheme
 
 class MainActivity : ComponentActivity() {
@@ -63,6 +66,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val player = ExoPlayer.Builder(this@MainActivity).build()
             ReproductorTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
@@ -89,46 +93,18 @@ class MainActivity : ComponentActivity() {
                             canciones = listOf(
                                 Song(
                                     artista = "Artista",
-                                    cancion = 0,
+                                    cancion = R.raw.rojo,
                                     cover = R.raw.cover,
                                     nombre = "Cancion"
                                 ),
-                                Song(
-                                    artista = "Artista",
-                                    cancion = 0,
-                                    cover = R.raw.cover,
-                                    nombre = "Cancion"
-                                ),
-                                Song(
-                                    artista = "Artista",
-                                    cancion = 0,
-                                    cover = R.raw.cover,
-                                    nombre = "Cancion"
-                                ),
-                                Song(
-                                    artista = "Artista",
-                                    cancion = 0,
-                                    cover = R.raw.cover,
-                                    nombre = "Cancion"
-                                ),
-                                Song(
-                                    artista = "Artista",
-                                    cancion = 0,
-                                    cover = R.raw.cover,
-                                    nombre = "Cancion"
-                                ),
-                                Song(
-                                    artista = "Artista",
-                                    cancion = 0,
-                                    cover = R.raw.cover,
-                                    nombre = "Cancion"
-                                ),
+
                             ),
                             nombre = "Album",
                             cover = R.raw.cover,
                             genre = Generos.TRAP.nombre
                         ),
-                        modifier = Modifier.padding(innerPadding)
+                        modifier = Modifier.padding(innerPadding),
+                        player = player
                     )
                 }
             }
@@ -317,7 +293,7 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun AlbumView(album: Album, modifier: Modifier = Modifier) {
+    fun AlbumView(album: Album, modifier: Modifier = Modifier, player: ExoPlayer) {
         Column(
             modifier = modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -339,14 +315,14 @@ class MainActivity : ComponentActivity() {
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 album.canciones.forEach { cancion ->
-                    CancionCard(cancion)
+                    CancionCard(cancion, player)
                 }
             }
         }
     }
 
     @Composable
-    fun CancionCard(cancion: Song) {
+    fun CancionCard(cancion: Song, player: ExoPlayer) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -354,7 +330,14 @@ class MainActivity : ComponentActivity() {
                 .padding(horizontal = 14.dp),
             colors = CardDefaults.cardColors(
                 containerColor = Color.Transparent
-            )
+            ),
+            onClick = {
+                val trackUri = "android.resource://${this@MainActivity.packageName}/${cancion.cancion}"
+                val mediaItem = MediaItem.fromUri(Uri.parse(trackUri))
+                player.setMediaItem(mediaItem)
+                player.prepare()
+                player.play()
+            }
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
