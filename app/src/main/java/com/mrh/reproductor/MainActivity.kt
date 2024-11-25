@@ -10,6 +10,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,6 +21,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.outlined.FastForward
@@ -84,7 +86,44 @@ class MainActivity : ComponentActivity() {
                     AlbumView(
                         Album(
                             artista = "Profe",
-                            canciones = listOf(),
+                            canciones = listOf(
+                                Song(
+                                    artista = "Artista",
+                                    cancion = 0,
+                                    cover = R.raw.cover,
+                                    nombre = "Cancion"
+                                ),
+                                Song(
+                                    artista = "Artista",
+                                    cancion = 0,
+                                    cover = R.raw.cover,
+                                    nombre = "Cancion"
+                                ),
+                                Song(
+                                    artista = "Artista",
+                                    cancion = 0,
+                                    cover = R.raw.cover,
+                                    nombre = "Cancion"
+                                ),
+                                Song(
+                                    artista = "Artista",
+                                    cancion = 0,
+                                    cover = R.raw.cover,
+                                    nombre = "Cancion"
+                                ),
+                                Song(
+                                    artista = "Artista",
+                                    cancion = 0,
+                                    cover = R.raw.cover,
+                                    nombre = "Cancion"
+                                ),
+                                Song(
+                                    artista = "Artista",
+                                    cancion = 0,
+                                    cover = R.raw.cover,
+                                    nombre = "Cancion"
+                                ),
+                            ),
                             nombre = "Album",
                             cover = R.raw.cover,
                             genre = Generos.TRAP.nombre
@@ -101,7 +140,11 @@ class MainActivity : ComponentActivity() {
     fun MusicBottomBar() {
         val values = listOf(NavBarValues.INICIO, NavBarValues.PLAYLISTS)
         var isPlaying by remember { mutableStateOf(false) }
-        Card {
+        Card(
+            colors = CardDefaults.cardColors(
+
+            )
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -283,10 +326,49 @@ class MainActivity : ComponentActivity() {
             Image(
                 painter = painterResource(album.cover),
                 contentDescription = null,
-                modifier = Modifier.size(230.dp).clip(RoundedCornerShape(20.dp))
+                modifier = Modifier
+                    .size(230.dp)
+                    .clip(RoundedCornerShape(20.dp))
             )
             Text(text = album.nombre, fontSize = 35.sp)
-            Text(text = album.artista , fontSize = 20.sp)
+            Text(text = album.artista, fontSize = 20.sp)
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                album.canciones.forEach { cancion ->
+                    CancionCard(cancion)
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun CancionCard(cancion: Song) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(80.dp)
+                .padding(horizontal = 14.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.Transparent
+            )
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Image(
+                    painter = painterResource(cancion.cover),
+                    contentDescription = "Caratula"
+                )
+                Column {
+                    Text(cancion.nombre, fontWeight = FontWeight.Bold)
+                    Text("${cancion.artista} | 3:08")
+                }
+            }
         }
     }
 
